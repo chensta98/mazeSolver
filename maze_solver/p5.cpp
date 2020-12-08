@@ -32,12 +32,13 @@ private:
 void maze::setMap(int i, int j, int n)
 // Set mapping from maze cell (i,j) to graph node n. 
 {
+    map[i][j] = n;
 }
 
 int maze::getMap(int i, int j) const
 // Return mapping of maze cell (i,j) in the graph.
 {
-    return 5;
+    return map[i][j];
 }
 
 maze::maze(ifstream& fin)
@@ -98,7 +99,7 @@ void maze::print(int goalI, int goalJ, int currI, int currJ)
 bool maze::isLegal(int i, int j)
 // Return the value stored at the (i,j) entry in the maze.
 {
-    if (i < 0 || i > rows || j < 0 || j > cols)
+    if (i < 0 || i > rows - 1 || j < 0 || j > cols - 1)
         throw rangeError("Bad value in maze::isLegal");
 
     return value[i][j];
@@ -107,6 +108,76 @@ bool maze::isLegal(int i, int j)
 void maze::mapMazeToGraph(graph& g)
 // Create a graph g that represents the legal moves in the maze m.
 {
+    int id = 0;
+    for (int i = 0; i < rows; i++)
+    {
+        for (int j = 0; j < cols; j++)
+        {
+            cout << "ROW: " << i << "COL: " << j << endl;
+            if (isLegal(i, j))
+            {
+                node n;
+                n.setId(id);
+                g.addNode(n);
+                setMap(i, j, id);
+                id++;
+            }
+        }
+    }
+
+    for (int x = 0; x < rows; x++)
+    {
+        for (int y = 0; y < cols; y++) 
+        {
+            cout << map[x][y] << "\t";
+        }
+        cout << endl;
+    }
+
+    for (int x = 0; x < rows; x++)
+    {
+        for (int y = 0; y < cols; y++)
+        {
+            if (isLegal(x, y))
+            {
+                int source_id = getMap(x, y);
+                // Right Edge
+                if (y + 1 <= cols - 1)
+                {
+                    if (isLegal(x, y + 1))
+                    {
+                        g.addEdge(source_id, getMap(x, y + 1));
+                    }
+                }
+                // Left Edge
+                if (y - 1 >= 0)
+                {
+                    if (isLegal(x, y - 1))
+                    {
+                        g.addEdge(source_id, getMap(x, y - 1));
+                    }
+                }
+                // Up Edge
+                if (x - 1 >= 0)
+                {
+                    if (isLegal(x - 1, y))
+                    {
+
+                        g.addEdge(source_id, getMap(x - 1, y));
+                    }
+                }
+                // Down Edge
+                if (x + 1 <= rows - 1)
+                {
+                    if (isLegal(x + 1, y))
+                    {
+                        g.addEdge(source_id, getMap(x + 1, y));
+                    }
+                }
+            }
+        }
+    }
+
 }
 
 
@@ -133,6 +204,8 @@ int main()
         while (fin && fin.peek() != 'Z')
         {
             maze m(fin);
+            m.mapMazeToGraph(g);
+            cout << g << endl;
             m.print(6,9,0,0);
         }
 
