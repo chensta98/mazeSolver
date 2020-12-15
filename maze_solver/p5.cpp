@@ -210,7 +210,7 @@ void maze::findPathRecursive(graph& g)
     g.clearVisit();
     stack<int> path = stack<int>();
 
-    g.dfs(g.getNode(getMap(0, 0)), getMap(rows - 1, cols - 1), path);
+    // g.dfs(g.getNode(getMap(0, 0)), getMap(rows - 1, cols - 1), path);
 
     printPath(path);
 }
@@ -316,7 +316,8 @@ bool maze::findShortestPath1(graph& g)
 
 bool maze::findShortestPath2(graph& g)
 {
-    
+
+    return true;
 }
 
 void maze::printPath(stack<int>& path)
@@ -347,7 +348,7 @@ int main()
     ifstream fin;
 
     // Read the maze from the file.
-    string fileName = "Maze 1.txt";
+    string fileName = "./mazes/maze1.txt";
 
     fin.open(fileName.c_str());
     if (!fin)
@@ -368,8 +369,9 @@ int main()
             g.printNodes();
             g.printEdges();
 
-            m.findPathRecursive(g);
-            m.findPathNonRecursive(g);
+            // m.findPathRecursive(g);
+            // m.findPathNonRecursive(g);
+            m.findShortestPath1(g);
         }
 
 
